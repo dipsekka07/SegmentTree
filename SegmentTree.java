@@ -44,7 +44,7 @@ public class SegmentTree<T> {
         updateSegmentTree(index, newValue, 0, 0, this.A.length-1);
     }
 
-    public void updateSegmentTree(int index, T newValue,  int pos, int Rs, int Re) {
+    private void updateSegmentTree(int index, T newValue,  int pos, int Rs, int Re) {
         if(Rs == Re){
             segTree[pos] = newValue;
             return;
