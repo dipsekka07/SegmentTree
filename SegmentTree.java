@@ -1,3 +1,6 @@
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.BiFunction;
 
 public class SegmentTree<T> {
@@ -8,9 +11,14 @@ public class SegmentTree<T> {
     private BiFunction<T, T, T> operator;
     private T sentinel;
 
-    public SegmentTree( T[] A, BiFunction<T, T, T> operator) {
-        this.A = A;
-        final int size = A.length;
+    public SegmentTree( Collection<T> iterable, BiFunction<T, T, T> operator) {
+        int size = iterable.size();
+        this.A = (T[]) new Object[size];
+        int i=0;
+        for(T t: iterable){
+            this.A[i] = t;
+            i++; 
+        }
         segTree = (T[]) new Object[4*size];
         sentinel = (T) new Object();
         this.operator =  (x1, x2) -> {
@@ -28,7 +36,7 @@ public class SegmentTree<T> {
         }
         final int mid = lo + (hi - lo) / 2;
         buildSegmentTree( left(pos), lo, mid);
-        buildSegmentTree( right(pos) , mid, hi );
+        buildSegmentTree( right(pos) , mid+1, hi );
         segTree[pos] = operator.apply(segTree[left(pos)], segTree[right(pos)]); 
     }
 
