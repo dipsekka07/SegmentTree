@@ -1,6 +1,6 @@
-import java.lang.reflect.Array;
+
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.function.BiFunction;
 
 public class SegmentTree<T> {
@@ -20,12 +20,15 @@ public class SegmentTree<T> {
             i++; 
         }
         segTree = (T[]) new Object[4*size];
+        for(int t=0; t<4*size; t++) {
+            this.segTree[i] = sentinel;
+        }
         sentinel = (T) new Object();
         this.operator =  (x1, x2) -> {
             if (x1 == sentinel) return x2; 
             if (x2 == sentinel) return x1;
             return operator.apply(x1, x2);
-          };;
+          };
         buildSegmentTree(0, 0, size - 1);
     }
 
@@ -38,6 +41,13 @@ public class SegmentTree<T> {
         buildSegmentTree( left(pos), lo, mid);
         buildSegmentTree( right(pos) , mid+1, hi );
         segTree[pos] = operator.apply(segTree[left(pos)], segTree[right(pos)]); 
+    }
+
+    public String getSegmentTree() {
+        ArrayList<T> res = new ArrayList<>();
+        for(int i=0; i<segTree.length; i++)
+            res.add(segTree[i]);
+        return res.toString();
     }
 
     private int left(int pos){
@@ -63,6 +73,8 @@ public class SegmentTree<T> {
         }else{
             updateSegmentTree(index, newValue, right(pos), mid+1, Re);
         }
+        
+        segTree[pos] = operator.apply(segTree[left(pos)], segTree[right(pos)]); 
     }
 
     public T query(int Qs, int Qe){
@@ -74,7 +86,7 @@ public class SegmentTree<T> {
             return sentinel;
         }else if (Rs == Re){
             return segTree[pos];
-        }else if( Qe <= Re && Qs >= Rs){
+        }else if( Qe >= Re && Qs <= Rs){
             return segTree[pos];
         }else{
             int mid = (Rs+Re)/2;
